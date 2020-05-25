@@ -40,10 +40,16 @@ class Sed:
         print(self.function)
 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('sed', metavar='', type=str, help="This is implantation of Linux-'sed' command in python.")
-parser.add_argument('--sum', dest='accumulate', action='store_const',const=sum, default=max, help='sum the integers (default: find the max)')
+# Using parser module for extra functionals in command lines.
+# argparse.ArgumentParser is the "command" and description of it. auto added -h flag. | usage = initialize expression
+parser = argparse.ArgumentParser(prog='sed', usage='%(prog)s [options]')
+parser.add_argument('-e', '--expression', type=str, metavar='', help="Expression represent the command 'sed' use. "
+                                                                     "Example: 's/hi/bye/' ")
+parser.add_argument('input_file', type=str, metavar='', help="The file 'sed' will extract data from")
+parser.add_argument('input_file', type=str, metavar='', help="The file 'sed' write the changes to.")
+args = parser.parse_args()
 
+args = parser.parse_args()
 # checking if the sed is execute via "pipe", meaning a string incoming.
 if not os.isatty(0):
     cmd = sys.stdin.read()
