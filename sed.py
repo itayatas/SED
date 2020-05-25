@@ -39,17 +39,31 @@ class Sed:
         # if self.function[0].lower == "s":
         print(self.function)
 
+def sed_checker(string):
+    if string != 'sed':
+        raise argparse.ArgumentTypeError("%s is not excepted. Please add 'sed'." % string)
+    return string
+
+def expression_checker(string):
+    if string != 'exp':
+        raise argparse.ArgumentTypeError("%s is not valid. Please write valid expression." % string)
+    return string
 
 # Using parser module for extra functionals in command lines.
 # argparse.ArgumentParser is the "command" and description of it. auto added -h flag. | usage = initialize expression
-parser = argparse.ArgumentParser(prog='sed', usage='%(prog)s [options]')
-parser.add_argument('-e', '--expression', type=str, metavar='', help="Expression represent the command 'sed' use. "
+parser = argparse.ArgumentParser(prog='sed',description="This is implementation of 'sed' command in linux")
+parser.add_argument('foo',type=sed_checker, metavar='', help="The file 'sed' will extract data from")
+parser.add_argument('expression', type=expression_checker, metavar='', help="Expression represent the command 'sed' use. "
                                                                      "Example: 's/hi/bye/' ")
-parser.add_argument('input_file', type=str, metavar='', help="The file 'sed' will extract data from")
-parser.add_argument('input_file', type=str, metavar='', help="The file 'sed' write the changes to.")
+parser.add_argument('--input_file', type=str, metavar='', help="The file 'sed' will extract data from")
+parser.add_argument('--output_file', type=str, metavar='', help="The file 'sed' write the changes to.")
 args = parser.parse_args()
 
-args = parser.parse_args()
+def sed(argument):
+    print(argument)
+
+if __name__ == '__main__':
+    sed(args.expression)
 # checking if the sed is execute via "pipe", meaning a string incoming.
 if not os.isatty(0):
     cmd = sys.stdin.read()
