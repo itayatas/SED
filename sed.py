@@ -6,16 +6,18 @@ __email__ = "itayatas10@gmail.com"
 __status__ = "Production"
 
 import re
-# re - Regular Expression is the basic usage of "SED" command.
 
+
+# re - Regular Expression is the basic usage of "SED" command.
 
 # /g == global, all words in textfile / string
 # /i == ignore cases (upper, lower)
 # /p == printing the string / text file
 # /w == specific file
 
-class Sed:
-    def __init__(self):
-        """
 
+class Sed:
+    def __init__(self, *args, old_file=None, new_file=None):
+        """
+            
         """
