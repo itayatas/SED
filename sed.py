@@ -62,12 +62,12 @@ def outputFileChecker(string):
 
 # Using parser module for extra functionals in command lines.
 # argparse.ArgumentParser is the "command" and description of it. auto added -h flag. | usage = initialize expression
-parser = argparse.ArgumentParser(prog='sed',description="This is implementation of 'sed' command in linux")
-parser.add_argument('foo',type=sedChecker, metavar='', help="The file 'sed' will extract data from")
-parser.add_argument('expression', type=expressionChecker, metavar='', help="Expression represent the command 'sed' use. "
-                                                                     "Example: 's/hi/bye/' ")
-parser.add_argument('input_file', type=inputFileChecker, metavar='', help="The file 'sed' will extract data from")
-parser.add_argument('output_file', type=outputFileChecker, metavar='', help="The file 'sed' write the changes to.")
+parser = argparse.ArgumentParser(description="This is implementation of 'sed' command in linux")
+parser.add_argument('foo',type=sedChecker, metavar='sed', help="The linux command will be execute once assigned to command line. Accepting 'S' attribute: to string change/")
+parser.add_argument('expression', type=expressionChecker, metavar="'expression'", help="Expression represent the command 'sed' use. "
+                                                                     "Example: 's/old_word/new_word/' ")
+parser.add_argument('input_file', type=inputFileChecker, metavar='input_file', help="The file 'sed' will extract data from. \n If argument not specfied: accept 'pipe' string input.")
+parser.add_argument('output_file', type=outputFileChecker, metavar='output_file', help="The file 'sed' write the changes to.\n If argument not specfied: the line will be printed to command line.")
 args = parser.parse_args()
 
 
