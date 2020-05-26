@@ -23,11 +23,25 @@ import sys
 # Reading arguments from command line, removing the first "sed.py" argument.
 def sed(expression, input_file=None, output_file=None):
     """
+    This function is the sed implement engine. after checking few cases at the checkers below.
+    Sed function also checking for input / out strategy. making sure there is some kind of input.
+    IF no input argument found - the function checkes weather the command have been piped. ELSE: ERROR.
+    IF no output file added - just print the changes.
+    No changed found to initialize? raise errors.
 
+    @param expression: The expression need to be executed from command shell.
+    @param input_file: Input file to extract data from.
+    @param output_file: Output file to initialize new data.
     """
-    # Converting expression iterable list again.
+    # Converting arguments to new string > lists > then creates old and new strings to implement.
     expression = "".join(expression)
-    expression = re.sub("[^\w]", " ", expression).split()
+    expression_arguments = re.sub("[^\w]", " ", expression).split()
+    old_string = expression_arguments[1]
+    new_string = expression_arguments[2]
+    # Converting arguments from list to strings.
+    input_file = "".join(input_file)
+    output_file = "".join(output_file)
+
     string = ""
     if not input_file:
         if piped():
@@ -38,17 +52,25 @@ def sed(expression, input_file=None, output_file=None):
     else:  # got input_file | Using try,except for making sure the file is 'edit-able'.
         try:
             # Open a file: file
+            print(input_file)
             file = open(input_file, mode='r')
             # read all lines at once
             string = file.read()
             # close the file
+            print(string)
             file.close()
         except (OSError, ValueError) as error:
             print(error)
-
     # changing the expression as added.
     changed_string = re.sub(expression[1], expression[2], string)
-    # if not output_file:
+    if output_file:
+        try:
+            # Open a file: file
+            file = open(output_file, mode='w')
+            file.write(string)
+        except (OSError, ValueError) as error:
+            print(error)
+    print(changed_string)
     # function = re.compile('\w+').findall(arguments[0])
     # sorce = arguments[1:]
     # print(self.sorce)
