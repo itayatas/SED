@@ -15,34 +15,28 @@ import sys
 # Import sys for getting argument via console
 # argparse module add much more functional to command line/
 
-# /g == global, all words in textfile / string
+# /g == global, all words in testfile / piped string
 # /i == ignore cases (upper, lower)
 # /p == printing the string / text file
 # /w == specific file
 
 # Reading arguments from command line, removing the first "sed.py" argument.
-
-class Sed:
-    """
-    Sed class is implementation of 'sed' command in Linux environment.
-    This class initialize the functional of 'set' command by detecting flags and input/output files/strings
+def checker(arguments):
     """
 
-    def __init__(self, arguments):
-        """
-
-        """
-        # Finding the pattern in function. expecting "S" or "s" for replacing.
-        self.function = re.compile('\w+').findall(arguments[0])
-        self.sorce = arguments[1:]
-        print(self.sorce)
-        # if self.function[0].lower == "s":
-        print(self.function)
+    """
+    # Finding the pattern in function. expecting "S" or "s" for replacing.
+    self.function = re.compile('\w+').findall(arguments[0])
+    self.sorce = arguments[1:]
+    print(self.sorce)
+    # if self.function[0].lower == "s":
+    print(self.function)
 
 
 def sedChecker(string):
     """
-    @param string: The entered value. accept: 'sed' only.
+    accept: 'sed' only. (VERSION 1.0.0)
+    @param string: The entered value.
     @raise
     """
     if string != 'sed':
@@ -52,21 +46,40 @@ def sedChecker(string):
 
 def expressionChecker(string):
     """
-    @param string: The entered value. accept valid expression only. Example: 's/old_word/new_word/'
+    accept valid expression only. Example: 's/old_word/new_word/'
+    @param string: The entered value.
     @raise
     """
-    if string != 'exp':
-        raise argparse.ArgumentTypeError("'%s' is not valid expression. Please write valid expression." % string)
-    return string
+    # if string.count('/') != 3:
+    #     raise argparse.ArgumentTypeError("Please make sure your expression has the right amount of '/'")
+    # string = re.sub(r'[^\w]', ' ', string)
+    # getting all arguments within 'argument/' expression. meaning, must be a 'slash after the argument'
+    arguments = re.findall(r'[a-zA-Z]+/', string)
+    # If the expression has any non-alphabetic or '/' symbol in expression. FINDING ONLY ![A-Z]+! symbols
+
+    if re.sub(r'[a-zA-Z]+/', "", string).replace("'","").replace('"',"") != "":
+        raise argparse.ArgumentTypeError("Please make sure only alphabetic chars or '/' symbol added to expression.")
+    # Deletes all slash in arguments
+    arguments = [a.replace('/', '') for a in arguments]
+    # print(arguments)
+    if arguments[0] != 's':
+        raise argparse.ArgumentTypeError(
+            "Please make sure your expression has the attribute 's'. example 's/old_word/new_word'")
+    if len(arguments) != 3:
+        raise argparse.ArgumentTypeError(
+            "Please make sure your expression has 3 attributes. example: 's/old_word/new_word'")
+
+    return arguments
 
 
 def inputFileChecker(string):
     """
-    @param string: The entered value. Checking if input_file OR 'string' via 'PIPE' entered. if not, raise error.
+    @param string: The entered value.
+    Checking if input_file OR 'string' via 'PIPE' entered. if not, raise error.
     If the found file, returns the name of the file.
     else: checking if the string entered via PIPE: example: "echo hey | sed 'expression'"
     """
-    if os.path.isfile('%s' % (string)):
+    if os.path.isfile('%s' % string):
         return string
     else:
         if not os.isatty(0):
@@ -76,14 +89,17 @@ def inputFileChecker(string):
 
 
 def outputFileChecker(string):
-    if os.path.isfile('%s' % (string)):
+    """
+    Checking if there is outfile. if not, creating new one.
+    @param string: The entered value.
+    """
+    if os.path.isfile('%s' % string):
         return
     else:
         open('%s' % string, "a")
-        print("created new file")
 
 
-# Using parser module for extra functionals in command lines.
+# Using parser module for extra functional in command lines.
 # argparse.ArgumentParser is the "command" and description of it. auto added -h flag.
 # foo = 'sed' function. metavar == 'sed' -> shows in command line.
 # expression = '/s/old_word/new_word'. metavar == 'expression' -> shows in command line.
@@ -96,19 +112,13 @@ parser = argparse.ArgumentParser(description="This is implementation of 'sed' co
 parser.add_argument('foo', type=sedChecker, metavar='sed',
                     help="The linux command will be execute once assigned to command line. Accepting 'S' attribute: "
                          "to string change/")
-parser.add_argument('expression', type=expressionChecker, metavar="'expression'",
+parser.add_argument('expression', type=expressionChecker, metavar="[expression]",
                     help="Expression represent the command 'sed' use. "
                          "Example: 's/old_word/new_word/' ")
-parser.add_argument('input_file', type=inputFileChecker, metavar='input_file',
+parser.add_argument('input_file', type=inputFileChecker, metavar='[input_file]',
                     help="The file 'sed' will extract data from. \n If argument not specified: accept 'pipe' string "
                          "input.")
-parser.add_argument('output_file', type=outputFileChecker, metavar='output_file',
+parser.add_argument('output_file', type=outputFileChecker, metavar='[output_file]',
                     help="The file 'sed' write the changes to.\n If argument not specified: the line will be printed "
                          "to command line.")
 args = parser.parse_args()
-
-# checking if the sed is execute via "pipe", meaning a string incoming.
-
-print(cmd)
-# Initialize new SED object. future features to detect different flags.
-# sed = Sed(script_arguments)
