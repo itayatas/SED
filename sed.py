@@ -42,27 +42,34 @@ def sed(expression, input_file=None, output_file=None):
     input_file = "".join(input_file)
     output_file = "".join(output_file)
 
+    # Creating new string to initialize.
+    # (Effects all the rest of the program, string initialize with pipe or data in input_file.
     string = ""
+
+    # Case not founded file, trying to extract string from pipe. if both failed > raise error.
     if not input_file:
         if piped():
             string = sys.stdin.read()
         else:
             raise argparse.ArgumentTypeError("Cant find any 'string'(Pipe) OR 'input_file'. Please enter valid "
                                              "arguments")
-    else:  # got input_file | Using try,except for making sure the file is 'edit-able'.
+
+    # Got input_file | Using try,except for making sure the file is 'edit-able'.
+    else :
         try:
             # Open a file: file
-            print(input_file)
             file = open(input_file, mode='r')
             # read all lines at once
             string = file.read()
             # close the file
-            print(string)
             file.close()
         except (OSError, ValueError) as error:
             print(error)
+
     # changing the expression as added.
-    changed_string = re.sub(expression[1], expression[2], string)
+    changed_string = re.sub(old_string, new_string, string)
+
+    # Case output_file, trying to initialize the data. if failed > raise error.
     if output_file:
         try:
             # Open a file: file
@@ -70,12 +77,16 @@ def sed(expression, input_file=None, output_file=None):
             file.write(string)
         except (OSError, ValueError) as error:
             print(error)
+
+    #Printing all the changes.
+    print("The new output:")
+    print("--------------------------------")
     print(changed_string)
-    # function = re.compile('\w+').findall(arguments[0])
-    # sorce = arguments[1:]
-    # print(self.sorce)
-    # # if self.function[0].lower == "s":
-    # print(self.function)
+    print("--------------------------------")
+
+    if old_string not in string:
+        print("sed-engine: [Cant find match of '%s'"%old_string,"in input string.]")
+
 
 
 def sedChecker(string):
@@ -127,7 +138,6 @@ def inputFileChecker(string):
     else: checking if the string entered via PIPE: example: "echo hey | sed 'expression'"
     """
     if os.path.isfile('%s' % string):
-        "print"
         return string
     else:
         raise argparse.ArgumentTypeError("Cant find any file named: %s" % string)
