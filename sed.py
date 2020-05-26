@@ -26,8 +26,8 @@ def checker(arguments):
 
     """
     # Finding the pattern in function. expecting "S" or "s" for replacing.
-    self.function = re.compile('\w+').findall(arguments[0])
-    self.sorce = arguments[1:]
+    function = re.compile('\w+').findall(arguments[0])
+    sorce = arguments[1:]
     print(self.sorce)
     # if self.function[0].lower == "s":
     print(self.function)
@@ -58,21 +58,19 @@ def expressionChecker(string):
 
     # If the expression has any non-alphabetic or '/' symbol in expression. FINDING ONLY ![A-Z]+! symbols
     # Accepting quotes ("",'') only at the end and edges of string.
-    if re.sub(r'[a-zA-Z]+/', "", string).replace("'","").replace('"',"") != "":
+    if re.sub(r'[a-zA-Z]+/', "", string).replace("'", "").replace('"', "") != "":
         raise argparse.ArgumentTypeError("Please make sure only alphabetic chars or '/' symbol added to expression. ("
                                          "Quotes can be added only to edges)")
 
     # Deletes all slash in arguments
     arguments = [a.replace('/', '') for a in arguments]
-
     if arguments[0] != 's':
         raise argparse.ArgumentTypeError(
             "Please make sure your expression has the attribute 's'. example 's/old_word/new_word'")
     if len(arguments) != 3:
         raise argparse.ArgumentTypeError(
             "Please make sure your expression has 3 attributes. example: 's/old_word/new_word'")
-
-    return arguments
+    return " ".join(arguments)
 
 
 def inputFileChecker(string):
@@ -83,12 +81,10 @@ def inputFileChecker(string):
     else: checking if the string entered via PIPE: example: "echo hey | sed 'expression'"
     """
     if os.path.isfile('%s' % string):
+        "print"
         return string
     else:
-        if not os.isatty(0):
-            return sys.stdin.read()
-        else:
-            raise argparse.ArgumentTypeError("Please enter 'input_file' or pipe a string via command.")
+        raise argparse.ArgumentTypeError("Cant find any file named: %s" % string)
 
 
 def outputFileChecker(string):
@@ -102,6 +98,16 @@ def outputFileChecker(string):
         open('%s' % string, "a")
 
 
+def ifPiped():
+    if not os.isatty(0):
+        cmd = sys.stdin.read()
+        print(cmd)
+        return False
+    else:
+        print("standard behavior")
+        return True
+
+
 # Using parser module for extra functional in command lines.
 # argparse.ArgumentParser is the "command" and description of it. auto added -h flag.
 # foo = 'sed' function. metavar == 'sed' -> shows in command line.
@@ -111,17 +117,18 @@ def outputFileChecker(string):
 # output_file = the file will initialize with new data. metavar == 'output_file' -> shows in command line.
 #   IF NOT ASSIGN: the changes will be printed to command line.
 
+
 parser = argparse.ArgumentParser(description="This is implementation of 'sed' command in linux")
 parser.add_argument('foo', type=sedChecker, metavar='sed',
                     help="The linux command will be execute once assigned to command line. Accepting 'S' attribute: "
                          "to string change/")
-parser.add_argument('expression', type=expressionChecker, metavar="[expression]",
+parser.add_argument('expression', type=expressionChecker, nargs=1, metavar="[expression]",
                     help="Expression represent the command 'sed' use. "
                          "Example: 's/old_word/new_word/' ")
-parser.add_argument('input_file', type=inputFileChecker, metavar='[input_file]',
+parser.add_argument('input_file', type=inputFileChecker, nargs="*", metavar='[input_file]',
                     help="The file 'sed' will extract data from. \n If argument not specified: accept 'pipe' string "
                          "input.")
-parser.add_argument('output_file', type=outputFileChecker, metavar='[output_file]',
+parser.add_argument('output_file', type=outputFileChecker, nargs='*', metavar='[output_file]',
                     help="The file 'sed' write the changes to.\n If argument not specified: the line will be printed "
                          "to command line.")
 args = parser.parse_args()
