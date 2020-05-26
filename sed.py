@@ -63,7 +63,8 @@ def expressionChecker(string):
 def inputFileChecker(string):
     """
     @param string: The entered value. Checking if input_file OR 'string' via 'PIPE' entered. if not, raise error.
-    @If the found file, returns the name of the file. else: 
+    If the found file, returns the name of the file.
+    else: checking if the string entered via PIPE: example: "echo hey | sed 'expression'"
     """
     if os.path.isfile('%s' % (string)):
         return string
@@ -71,8 +72,7 @@ def inputFileChecker(string):
         if not os.isatty(0):
             return sys.stdin.read()
         else:
-            cmd = 0
-        return
+            raise argparse.ArgumentTypeError("Please enter 'input_file' or pipe a string via command.")
 
 
 def outputFileChecker(string):
