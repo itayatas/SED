@@ -28,15 +28,27 @@ def sed(expression, input_file=None, output_file=None):
     # Converting expression iterable list again.
     expression = "".join(expression)
     expression = re.sub("[^\w]", " ", expression).split()
-
+    string = ""
     if not input_file:
         if piped():
-            input_file = sys.stdin.read()
-            print(input_file)
+            string = sys.stdin.read()
         else:
             raise argparse.ArgumentTypeError("Cant find any 'string'(Pipe) OR 'input_file'. Please enter valid "
                                              "arguments")
-    # Finding the pattern in function. expecting "S" or "s" for replacing.
+    else:  # got input_file | Using try,except for making sure the file is 'edit-able'.
+        try:
+            # Open a file: file
+            file = open(input_file, mode='r')
+            # read all lines at once
+            string = file.read()
+            # close the file
+            file.close()
+        except (OSError, ValueError) as error:
+            print(error)
+
+    # changing the expression as added.
+    changed_string = re.sub(expression[1], expression[2], string)
+    # if not output_file:
     # function = re.compile('\w+').findall(arguments[0])
     # sorce = arguments[1:]
     # print(self.sorce)
