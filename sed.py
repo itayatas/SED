@@ -41,6 +41,8 @@ def sed(expression, input_file=None, output_file=None):
     # Converting arguments from list to strings.
     input_file = "".join(input_file)
     output_file = "".join(output_file)
+    #duplicate == IF PIPED AND GOT INPUTFILE.
+    duplicate = False
 
     # Creating new string to initialize.
     # (Effects all the rest of the program, string initialize with pipe or data in input_file.
@@ -55,7 +57,10 @@ def sed(expression, input_file=None, output_file=None):
                                              "arguments")
 
     # Got input_file | Using try,except for making sure the file is 'edit-able'.
-    else :
+    else:
+        if piped():  # Checking for multiplye inputs.
+            print(sys.stdin.read())
+            duplicate = True
         try:
             # Open a file: file
             file = open(input_file, mode='r')
@@ -78,15 +83,16 @@ def sed(expression, input_file=None, output_file=None):
         except (OSError, ValueError) as error:
             print(error)
 
-    #Printing all the changes.
+    # Printing all the changes.
     print("The new output:")
     print("--------------------------------")
     print(changed_string)
     print("--------------------------------")
 
     if old_string not in string:
-        print("sed-engine: [Cant find match of '%s'"%old_string,"in input string.]")
-
+        print("sed-engine: [Cant find match of '%s'" % old_string, "in input string.]")
+    if duplicate:
+        print("sed-engine: [Found 2 arguments, piped and from input_file. Priority == input_file]")
 
 
 def sedChecker(string):
@@ -171,7 +177,6 @@ def piped():
 # output_file = the file will initialize with new data. metavar == 'output_file' -> shows in command line.
 #   IF NOT ASSIGN: the changes will be printed to command line.
 
-
 parser = argparse.ArgumentParser(description="This is implementation of 'sed' command in linux")
 parser.add_argument('foo', type=sedChecker, metavar='sed',
                     help="The linux command will be execute once assigned to command line. Accepting 'S' attribute: "
@@ -186,4 +191,5 @@ parser.add_argument('output_file', type=outputFileChecker, nargs='*', metavar='[
                     help="The file 'sed' write the changes to.\n If argument not specified: the line will be printed "
                          "to command line.")
 args = parser.parse_args()
+# Initialize sed-engine:
 sed(args.expression, args.input_file, args.output_file)
