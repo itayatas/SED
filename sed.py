@@ -55,13 +55,16 @@ def expressionChecker(string):
     # string = re.sub(r'[^\w]', ' ', string)
     # getting all arguments within 'argument/' expression. meaning, must be a 'slash after the argument'
     arguments = re.findall(r'[a-zA-Z]+/', string)
-    # If the expression has any non-alphabetic or '/' symbol in expression. FINDING ONLY ![A-Z]+! symbols
 
+    # If the expression has any non-alphabetic or '/' symbol in expression. FINDING ONLY ![A-Z]+! symbols
+    # Accepting quotes ("",'') only at the end and edges of string.
     if re.sub(r'[a-zA-Z]+/', "", string).replace("'","").replace('"',"") != "":
-        raise argparse.ArgumentTypeError("Please make sure only alphabetic chars or '/' symbol added to expression.")
+        raise argparse.ArgumentTypeError("Please make sure only alphabetic chars or '/' symbol added to expression. ("
+                                         "Quotes can be added only to edges)")
+
     # Deletes all slash in arguments
     arguments = [a.replace('/', '') for a in arguments]
-    # print(arguments)
+
     if arguments[0] != 's':
         raise argparse.ArgumentTypeError(
             "Please make sure your expression has the attribute 's'. example 's/old_word/new_word'")
