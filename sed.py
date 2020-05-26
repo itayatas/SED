@@ -21,16 +21,27 @@ import sys
 # /w == specific file
 
 # Reading arguments from command line, removing the first "sed.py" argument.
-def checker(arguments):
+def sed(expression, input_file=None, output_file=None):
     """
 
     """
+    # Converting expression iterable list again.
+    expression = "".join(expression)
+    expression = re.sub("[^\w]", " ", expression).split()
+
+    if not input_file:
+        if piped():
+            input_file = sys.stdin.read()
+            print(input_file)
+        else:
+            raise argparse.ArgumentTypeError("Cant find any 'string'(Pipe) OR 'input_file'. Please enter valid "
+                                             "arguments")
     # Finding the pattern in function. expecting "S" or "s" for replacing.
-    function = re.compile('\w+').findall(arguments[0])
-    sorce = arguments[1:]
-    print(self.sorce)
-    # if self.function[0].lower == "s":
-    print(self.function)
+    # function = re.compile('\w+').findall(arguments[0])
+    # sorce = arguments[1:]
+    # print(self.sorce)
+    # # if self.function[0].lower == "s":
+    # print(self.function)
 
 
 def sedChecker(string):
@@ -70,6 +81,7 @@ def expressionChecker(string):
     if len(arguments) != 3:
         raise argparse.ArgumentTypeError(
             "Please make sure your expression has 3 attributes. example: 's/old_word/new_word'")
+
     return " ".join(arguments)
 
 
@@ -98,14 +110,12 @@ def outputFileChecker(string):
         open('%s' % string, "a")
 
 
-def ifPiped():
+def piped():
     if not os.isatty(0):
-        cmd = sys.stdin.read()
-        print(cmd)
-        return False
+        return True
     else:
         print("standard behavior")
-        return True
+        return False
 
 
 # Using parser module for extra functional in command lines.
@@ -132,3 +142,4 @@ parser.add_argument('output_file', type=outputFileChecker, nargs='*', metavar='[
                     help="The file 'sed' write the changes to.\n If argument not specified: the line will be printed "
                          "to command line.")
 args = parser.parse_args()
+sed(args.expression, args.input_file, args.output_file)
