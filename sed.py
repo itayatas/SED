@@ -161,10 +161,12 @@ def outputFileChecker(string):
 
 
 def piped():
+    """
+    Checking if there is a string in 'piped' command line. example: echo 'hey' | sed '...' ->>> Returns True.
+    """
     if not os.isatty(0):
         return True
     else:
-        print("standard behavior")
         return False
 
 
